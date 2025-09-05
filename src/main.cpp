@@ -1,15 +1,12 @@
 #include <iostream>
-#include <filesystem>
-#include <fstream>
 #include <string>
+#include "cmd/cmd.h"
 
 int main(int argc, char *argv[])
 {
-    // Flush after every std::cout / std::cerr
+
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
-
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
     std::cerr << "Logs from your program will appear here!\n";
 
      if (argc < 2) {
@@ -17,32 +14,12 @@ int main(int argc, char *argv[])
          return EXIT_FAILURE;
      }
 
-     std::string command = argv[1];
-
-     if (command == "init") {
-         try {
-             std::filesystem::create_directory(".git");
-             std::filesystem::create_directory(".git/objects");
-             std::filesystem::create_directory(".git/refs");
-
-             std::ofstream headFile(".git/HEAD");
-             if (headFile.is_open()) {
-                 headFile << "ref: refs/heads/main\n";
-                 headFile.close();
-             } else {
-                 std::cerr << "Failed to create .git/HEAD file.\n";
-                 return EXIT_FAILURE;
-             }
-
-             std::cout << "Initialized git directory\n";
-         } catch (const std::filesystem::filesystem_error& e) {
-             std::cerr << e.what() << '\n';
-             return EXIT_FAILURE;
-         }
-     } else {
-         std::cerr << "Unknown command " << command << '\n';
-         return EXIT_FAILURE;
+     std::string name = argv[1];
+     std::vector<std::string> args;
+     for(int i = 2; i < argc; ++i){
+         args.emplace_back(argv[i]);
      }
+     Cmd cmd{name, args};
 
-     return EXIT_SUCCESS;
+     return switchCmd(cmd);
 }
