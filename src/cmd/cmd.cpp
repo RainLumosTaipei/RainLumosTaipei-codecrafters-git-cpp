@@ -38,7 +38,7 @@ namespace {
     }
 
     int catFile(Cmd& cmd){
-        std::string hashStr = *cmd.args.cbegin();
+        std::string hashStr = *cmd.args.rbegin();
         std::string dir = ".git/objects/" + hashStr.substr(0,2);
         std::ifstream file(dir + "/" + hashStr.substr(2));
         if(!file) return EXIT_FAILURE;
@@ -71,7 +71,7 @@ namespace {
     }
 
     int hashObject(Cmd& cmd){
-        std::ifstream file(*cmd.args.cbegin(), std::ios::binary);
+        std::ifstream file(*cmd.args.rbegin(), std::ios::binary);
         if (!file) return EXIT_FAILURE;
 
         std::stringstream ss;
